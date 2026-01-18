@@ -29,6 +29,7 @@ class Card {
 	private:
 		Suit suit;
 		int number;
+		bool hole;
 
 	// Data or methods that can be used by other classes
 	public:
@@ -42,6 +43,7 @@ class Card {
 		// Getter
 		Suit getSuit();
 		int getNumber();
+		bool getHole();
 
 		// I want the Deck class to be able to access the Card data without
 		// needing the getters.  I'm going to make it a friend class so that
@@ -89,7 +91,7 @@ class Deck {
 		std::vector<Card>::iterator end();
 		
         // Deal card adds a card to the hand. Returns a card. 
-        Card dealCard();
+        Card dealCard(bool show = true);
 };
 
 class Hand{

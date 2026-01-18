@@ -1,7 +1,11 @@
 #include "deck.h"
 #include <iostream>
+// On Windows the console code page may not be UTF-8 by default which causes
+// Unicode suit symbols (♠♥♦♣) to render incorrectly. Enable UTF-8 when
+// compiling/running on Windows so those characters print properly.
 
 int main(int argc, char** argv){
+
 	// Creates a deck
 	Deck deck;
 
@@ -26,17 +30,17 @@ int main(int argc, char** argv){
     playerHand.addCard(deck.dealCard());
     dealerHand.addCard(deck.dealCard());
     playerHand.addCard(deck.dealCard());
-    dealerHand.addCard(deck.dealCard());
+    dealerHand.addCard(deck.dealCard(false));
     
 	// Prints the playerHand and dealerHand using the iterator from
     // the above printing of the deck (given code)
-	std::cout << "PlayerHand";
+	std::cout << "PlayerHand: ";
     for(auto it = playerHand.begin(); it != playerHand.end(); ++it){
         std::cout << *it << "\t";
     }
     std::cout << std::endl;
    
-    std::cout << "DealerHand";
+    std::cout << "DealerHand: ";
     for(auto it = dealerHand.begin(); it != dealerHand.end(); ++it){
         std::cout << *it << "\t";
     }

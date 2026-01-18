@@ -8,6 +8,7 @@
 Card::Card(Suit suit, int number){
 	this->suit = suit;
 	this->number = number;
+	this->hole = false;
 }
 
 // Create a new Deck by instantiating each Card.
@@ -31,9 +32,12 @@ void Deck::shuffle(Deck& deck){
 	std::shuffle(deck.cards.begin(), deck.cards.end(), gen);
 }
 
-Card Deck::dealCard(){
+Card Deck::dealCard(bool show){
     Card top = cards.back();
-    std::cout << "Dealing: " << cards.back() << '\n';
+    if (!show){
+        top.hole = true;
+    }
+    std::cout << "Dealing: " << top << '\n';
     std::cout << std::endl;
     cards.pop_back();
     return top; 
@@ -54,6 +58,10 @@ void Hand::addCard(const Card& card){
 
 // Print out a representation of a Card
 std::ostream& operator<<(std::ostream& os, const Card& card){
+	if (card.hole){
+		os << "??";
+		return os;
+	}
 	std::string suit = "♠";
 	if(card.suit == HEART){
 		suit = "♥";
