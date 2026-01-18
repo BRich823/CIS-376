@@ -20,6 +20,7 @@ Deck::Deck(){
 	}
 }
 
+
 // "Shuffle" the deck by using the C++ standard library shuffle.
 void Deck::shuffle(Deck& deck){
 	// First need a random device.
@@ -30,12 +31,25 @@ void Deck::shuffle(Deck& deck){
 	std::shuffle(deck.cards.begin(), deck.cards.end(), gen);
 }
 
+Card Deck::dealCard(){
+    Card top = cards.back();
+    std::cout << "Dealing: " << cards.back() << '\n';
+    std::cout << std::endl;
+    cards.pop_back();
+    return top; 
+}
+
 // Get the Card at the given location (if valid)
 Card& Deck::operator[](size_t index){
 	if(index < 0 || index > 52){
 		throw std::out_of_range("That isn't a valid deck index.");
 	}
 	return cards[index];
+}
+
+// Adds a card to the hand
+void Hand::addCard(const Card& card){
+    cards.push_back(card); 
 }
 
 // Print out a representation of a Card
@@ -73,3 +87,12 @@ std::vector<Card>::iterator Deck::begin(){
 std::vector<Card>::iterator Deck::end(){
 	return cards.end();
 }
+
+std::vector<Card>::iterator Hand::begin(){
+    return cards.begin();
+}
+
+std::vector<Card>::iterator Hand::end(){
+    return cards.end();
+}
+
