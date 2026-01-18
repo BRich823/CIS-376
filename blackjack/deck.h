@@ -37,7 +37,6 @@ class Card {
 		// the default constructor as C++ would have made one.  But once you
 		// make a constructor on your own, C++ no longer makes the default one
 		// unless you tell it to.
-		Card() = default;
 		Card(Suit suit, int number);
 		
 		// Getter
@@ -48,7 +47,7 @@ class Card {
 		// needing the getters.  I'm going to make it a friend class so that
 		// it has access to my private information.
 		friend class Deck;
-
+        
 		// When you print something in C++, we send it to the standard output stream
 		// (std::cout).  Every type of data (ints, floats, strings, your own data types)
 		// must have an operator<< function that tells std::cout how to print that
@@ -89,6 +88,21 @@ class Deck {
 		std::vector<Card>::iterator begin();
 		std::vector<Card>::iterator end();
 		
+        // Deal card adds a card to the hand. Returns a card. 
+        Card dealCard();
+};
+
+class Hand{
+    private:
+        std::vector<Card> cards;
+
+    public:
+        Hand() = default;
+
+        void addCard(const Card& card);
+
+        std::vector<Card>::iterator begin();
+        std::vector<Card>::iterator end();
 };
 
 #endif
