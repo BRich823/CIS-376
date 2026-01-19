@@ -56,6 +56,39 @@ void Hand::addCard(const Card& card){
     cards.push_back(card); 
 }
 
+// Score the hand
+//Aces can be 1 or 11, so we'll count them as 11 and subtract later if needed.
+int Hand::scoreHand(){
+	int score = 0;
+	int aces = 0;
+	bool hole = false;
+	for(auto it = cards.begin(); it != cards.end(); ++it){
+		if (it->getHole()){ //if the card is a hole, skip it
+			hole = true;
+			continue;
+		}
+		int num = it->getNumber(); //get the number of the card
+		if(num == 1){
+			num = 11;
+			aces += 1;
+		}
+		else if(num > 10){
+			num = 10;
+		}
+		score += num;
+	}
+	while ((score > 21) && (aces > 0)){
+			score -= 10;
+			aces -= 1;
+		}
+	std::cout << "Score: " << score;
+	if (hole){
+		std::cout << " + ??";
+	}
+	std::cout << std::endl;
+	return score;
+}
+
 // Print out a representation of a Card
 std::ostream& operator<<(std::ostream& os, const Card& card){
 	if (card.hole){
