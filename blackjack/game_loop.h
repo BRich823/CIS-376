@@ -37,6 +37,8 @@ class GameLoop{
         Hand dealerHand;
         int playerScore;
         int dealerScore;
+        int bet; 
+        int money; 
         bool gameOver;
         bool playerturn;
     public:

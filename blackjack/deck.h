@@ -44,6 +44,7 @@ class Card {
 		Suit getSuit();
 		int getNumber() const { return number; }
 		bool getHole() const { return hole; }
+        void reveal() { hole = false; }
 
 		// I want the Deck class to be able to access the Card data without
 		// needing the getters.  I'm going to make it a friend class so that
@@ -106,7 +107,8 @@ class Hand{
 
 		//score the hand
 		int scoreHand();
-
+        
+        Card& operator[](size_t index);
         std::vector<Card>::iterator begin();
         std::vector<Card>::iterator end();
 };

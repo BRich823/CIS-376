@@ -10,6 +10,8 @@ GameLoop::GameLoop(){
 	this->dealerScore = 0;
 	this->gameOver = false;
     this->playerturn = true;
+    this->bet = 0; 
+    this->money = 100; 
 }
 
 void GameLoop::playGame(){
@@ -24,11 +26,29 @@ void GameLoop::playGame(){
 
 	// Shuffle the deck (notice the static-method call)
 	Deck::shuffle(deck);
+    
+    // Displays initial amount of money
+    std::cout << "Money left: " << money << "\n"; 
+    // Handles initial player bets. 
+    while (true) {
+        std::cout << "Place your bet: "; 
+        if (std::cin >> bet) {
+            if (bet <= money) {
+                money -= bet; 
+                break; 
+            }else{
+                std::cout << "You don't have enough money for that bet.\n"; 
+            }
+        }else{
+            std::cout << "Please enter a proper amount for the bet.\n"; 
+        }
+    }
 
     // Deals cards to the player and the dealer
     // Using the above vector, the result should look like so:
     // playerHand = < ♠A, ♥9 >
     // dealerHand = < ♣3, ♦K >
+    std::cout << "Dealing...\n\n"; 
     playerHand.addCard(deck.dealCard());
     dealerHand.addCard(deck.dealCard());
     playerHand.addCard(deck.dealCard());
@@ -36,21 +56,21 @@ void GameLoop::playGame(){
     
 	// Prints the playerHand and dealerHand using the iterator from
     // the above printing of the deck (given code)
-    std::cout << "PlayerHand: ";
+    std::cout << "Your Hand: ";
     for(auto it = playerHand.begin(); it != playerHand.end(); ++it){
         std::cout << *it << "\t";
     }
     std::cout << std::endl;
     playerScore = playerHand.scoreHand();
 
-    std::cout << "DealerHand: ";
+    std::cout << "Dealer's Hand: ";
     for(auto it = dealerHand.begin(); it != dealerHand.end(); ++it){
         std::cout << *it << "\t";
     }
     std::cout << std::endl;
     dealerScore = dealerHand.scoreHand();
     while (this->playerturn && this->gameOver == false){
-        // Player's turn
+        // Player's turn 
         std::cout << "Player's turn. Choose an action (h/s/d): ";
         std::string input;
         std::cin >> input;
@@ -61,14 +81,16 @@ void GameLoop::playGame(){
         else if (action == PlayerAction::Stand){
             this->playerturn = false;
         }
-        else if (action == PlayerAction::Double){
+        else if ((action == PlayerAction::Double) && (bet <= money)){
+            money -= bet;
+            bet += bet; 
             playerHand.addCard(deck.dealCard());
             this->playerturn = false;
         }
         else {
             std::cout << "Invalid action. Please try again." << std::endl;
         }
-        std::cout << "PlayerHand: ";
+        std::cout << "Your Hand: ";
         for(auto it = playerHand.begin(); it != playerHand.end(); ++it){
             std::cout << *it << "\t";
         }
@@ -77,14 +99,62 @@ void GameLoop::playGame(){
         //handles bust
         if (playerScore > 21){
             std::cout << "Player busts! Dealer wins." << std::endl;
+            std::cout << "You lost $" << bet << "\n";
+            std::cout << "Money left: " << money << "\n"; 
             gameOver = true;
         }
     }
-    //dealer plays if player hasn't busted
-
-    //compare scores
-
-    //handle bets
+    
+    // Dealer plays if player hasn't busted.
+    // First flips the hole card and adds the total. 
+    if (!gameOver) { 
+        dealerHand[1].reveal();
+        for (auto it = dealerHand.begin(); it != dealerHand.end(); ++it) {
+            std::cout << *it << "\t"; 
+        } 
+        // If the score is 17 or less, the dealer takes another card 
+        dealerScore = dealerHand.scoreHand();
+        while ((dealerScore <= 17) || dealerScore < playerScore) {  
+            std::cout << "Dealer Hits...\n"; 
+            dealerHand.addCard(deck.dealCard());
+            std::cout << "Dealer Hand: "; 
+            for (auto it = dealerHand.begin(); it != dealerHand.end(); ++it) {
+                std::cout << *it << "\t"; 
+            }
+            dealerScore = dealerHand.scoreHand(); 
+            if (dealerScore > 21) {
+                std::cout << "Dealer Busts\n"; 
+                break; 
+            }
+        }
+    
+        // Compares scores after the dealer's turn. 
+        if (playerScore > 21) {
+            std::cout << "Dealer Wins!\n";
+            std::cout << "You Lost $" << bet << "\n";
+            std::cout << "Money Left: " << money << "\n\n";
+        }else if (dealerScore > 21) {
+            std::cout << "Player Wins!\n"; 
+            money += (bet + bet * 2);
+            std::cout << "You Won $" << bet * 2 << "\n";
+            std::cout << "Money Left: " << money << "\n\n"; 
+        }else if (playerScore > dealerScore) {
+            std::cout << "Player Wins!\n";
+            money += (bet + bet * 2);
+            std::cout << "You Won $" << bet * 2 << "\n";
+            std::cout << "Money Left: " << money << "\n\n";
+        }else if (dealerScore > playerScore) {
+            std::cout << "Dealer Wins!\n";
+            std::cout << "You Lost $" << bet << "\n";
+            std::cout << "Money Left: " << money << "\n\n";
+        }else{
+            std::cout << "Push!\n"; 
+            std::cout << "You get your money back.\n"; 
+            money += bet; 
+            std::cout << "Money Left: " << money << "\n\n"; 
+        }
+    }
+    
     if (GameLoop::promptPlayAgain(std::cin, std::cout)){
         //play again
         this->gameOver = false;

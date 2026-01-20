@@ -37,8 +37,6 @@ Card Deck::dealCard(bool show){
     if (!show){
         top.hole = true;
     }
-    std::cout << "Dealing: " << top << '\n';
-    std::cout << std::endl;
     cards.pop_back();
     return top; 
 }
@@ -49,6 +47,14 @@ Card& Deck::operator[](size_t index){
 		throw std::out_of_range("That isn't a valid deck index.");
 	}
 	return cards[index];
+}
+
+// Get the Card at the given location (if valid)
+Card& Hand::operator[](size_t index){
+    if(index < 0 || index > 52){
+        throw std::out_of_range("That isn't a valid deck index.");
+    }
+    return cards[index]; 
 }
 
 // Adds a card to the hand
@@ -136,4 +142,3 @@ std::vector<Card>::iterator Hand::begin(){
 std::vector<Card>::iterator Hand::end(){
     return cards.end();
 }
-
