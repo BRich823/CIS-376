@@ -1,6 +1,7 @@
 #include "game_loop.h"
 #include <iostream>
 #include <string>
+#include <limits>
 
 GameLoop::GameLoop(){
 	this->deck = Deck();
@@ -41,6 +42,10 @@ void GameLoop::playGame(){
             }
         }else{
             std::cout << "Please enter a proper amount for the bet.\n"; 
+            // Clear the error state and discard the invalid input so the
+            // next read can proceed normally instead of looping forever.
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
 
