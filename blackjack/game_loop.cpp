@@ -103,7 +103,7 @@ void GameLoop::playGame(){
         playerScore = playerHand.scoreHand();
         //handles bust
         if (playerScore > 21){
-            std::cout << "Player busts! Dealer wins." << std::endl;
+            std::cout << "Player busts! Dealer wins." << std::endl; 
             std::cout << "You lost $" << bet << "\n";
             std::cout << "Money left: " << money << "\n"; 
             gameOver = true;
@@ -160,11 +160,17 @@ void GameLoop::playGame(){
         }
     }
     
-    if (GameLoop::promptPlayAgain(std::cin, std::cout)){
-        //play again
-        this->gameOver = false;
-        this->playerturn = true;
-        this->playGame();
+    if (money == 0) {
+        gameOver = true;
+        std::cout << "You ran out of money. GAME OVER!!!\n";
+        return;
+    }else{
+        if (GameLoop::promptPlayAgain(std::cin, std::cout)){
+            //play again
+            this->gameOver = false;
+            this->playerturn = true;
+            this->playGame();
+        }
     }
     return;
 }
