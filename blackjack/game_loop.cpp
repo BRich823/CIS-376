@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include "miniaudio.h"
+
 
 GameLoop::GameLoop(){
 	this->deck = Deck();
@@ -25,9 +27,26 @@ void GameLoop::playGame(){
     Hand playerHand;
     Hand dealerHand;
 
-	// Shuffle the deck (notice the static-method call)
+	// Initializes the audio from miniaudio.h
+    ma_result result;
+    ma_engine engine; 
+    result = ma_engine_init(NULL, &engine); 
+    if (result != MA_SUCCESS) {
+        std::cerr << "Failed to initialize audio engine\n";
+        return;
+    }
+
+    // Shuffle the deck (notice the static-method call)
 	Deck::shuffle(deck);
     
+    // Plays shuffle audio file
+    result = ma_engine_play_sound(&engine, "cardShuffle.wav", NULL);
+    if (result != MA_SUCCESS) {
+        std::cerr << "Failed to play audio file\n";
+        ma_engine_uninit(&engine);
+        return;
+    }
+
     // Displays initial amount of money
     std::cout << "Money left: " << money << "\n"; 
     // Handles initial player bets. 
@@ -47,6 +66,14 @@ void GameLoop::playGame(){
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
+    }
+    // Plays betting audio file
+    // Plays an audio file
+    result = ma_engine_play_sound(&engine, "bet.wav", NULL);
+    if (result != MA_SUCCESS) {
+        std::cerr << "Failed to play audio file\n";
+        ma_engine_uninit(&engine);
+        return;
     }
 
     // Deals cards to the player and the dealer
@@ -142,12 +169,24 @@ void GameLoop::playGame(){
             std::cout << "Player Wins!\n"; 
             money += (bet + bet * 2);
             std::cout << "You Won $" << bet * 2 << "\n";
-            std::cout << "Money Left: " << money << "\n\n"; 
+            std::cout << "Money Left: " << money << "\n\n";
+            // Plays shuffle audio file
+            result = ma_engine_play_sound(&engine, "playerWins.wav", NULL);
+            if (result != MA_SUCCESS) {
+                std::cerr << "Failed to play audio file\n";
+                ma_engine_uninit(&engine);
+            }
         }else if (playerScore > dealerScore) {
             std::cout << "Player Wins!\n";
             money += (bet + bet * 2);
             std::cout << "You Won $" << bet * 2 << "\n";
             std::cout << "Money Left: " << money << "\n\n";
+            // Plays player wins audio file
+            result = ma_engine_play_sound(&engine, "playerWins.wav", NULL);
+            if (result != MA_SUCCESS) {
+                std::cerr << "Failed to play audio file\n";
+                ma_engine_uninit(&engine);
+            }
         }else if (dealerScore > playerScore) {
             std::cout << "Dealer Wins!\n";
             std::cout << "You Lost $" << bet << "\n";
@@ -163,6 +202,7 @@ void GameLoop::playGame(){
     if (money == 0) {
         gameOver = true;
         std::cout << "You ran out of money. GAME OVER!!!\n";
+        ma_engine_uninit(&engine);
         return;
     }else{
         if (GameLoop::promptPlayAgain(std::cin, std::cout)){
@@ -172,14 +212,15 @@ void GameLoop::playGame(){
             this->playGame();
         }
     }
+    ma_engine_uninit(&engine);
     return;
 }
 // Parse a textual input into a PlayerAction.
 // Accepts case-insensitive single-letter commands such as "h", "s", "d",
 // or the full words "hit", "stand", "double". Returns `PlayerAction::Invalid`
 // for unrecognized input.
-PlayerAction GameLoop::parsePlayerAction(const std::string &input){
-	PlayerAction action = PlayerAction::Invalid;
+PlayerAction GameLoop::parsePlayerAction(const std::string &input) {
+    PlayerAction action = PlayerAction::Invalid;
 	if (input == "h" || input == "hit"){
 		action = PlayerAction::Hit;
 	}
@@ -202,7 +243,7 @@ bool GameLoop::promptPlayAgain(std::istream &in, std::ostream &out){
 		return true;
 	}
 	else if (input == "n" || input == "no"){
-		return false;
+        return false;
 	}
 	else {
 		out << "Invalid input. Please enter 'y' or 'n'." << std::endl;
