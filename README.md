@@ -4,7 +4,7 @@ Blackjack is a widely-known and popular game. We are creating a very simple, ASC
 
 ## Download and Run 
 1. Download the blackjack folder onto your device.
-2. Run ```bash g++ main.cpp game_loop.cpp deck.cpp -o myGame``` then ```bash ./myGame```.
+2. Run ```g++ main.cpp game_loop.cpp deck.cpp -o myGame``` then ```./myGame```.
 
 ## Rules
 Now you have the game file on your computer and have begun to play the game. Here are the basic rules to blackjack: 
