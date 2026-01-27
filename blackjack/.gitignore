@@ -1,0 +1,8 @@
+# Compiled binaries
+a.out
+*.exe
+
+# Build artifiacts
+*.o
+build/
+bin/
