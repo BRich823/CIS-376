@@ -1,3 +1,6 @@
+// Blackjack (Learning C++)
+// Colin Nagley and Brody Richards
+
 #include "deck.h"
 #include <iostream>
 #include "game_loop.h"
